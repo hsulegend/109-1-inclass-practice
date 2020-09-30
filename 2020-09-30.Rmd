@@ -1,0 +1,32 @@
+install.packages(c("googlesheets4","tidyverse"))
+---
+title: "課?<a0>?練習模<e7><89><88>"
+author: "?\?Ǽ?"
+date: "2020-09-30"
+output: output_format
+params:
+  id: "410683018"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Your code
+#用指示安裝套件
+```{r}
+install.packages(c("googlesheets4","tidyverse"))
+
+```
+```{r}
+library("googlesheets4","tidyverse")
+```
+#chunk快捷鍵ctrl+alt+I
+```{r}
+library(knitr)
+purl("2020-09-30.Rmd")
+```
+```{r}
+3 -> b
+```
+
