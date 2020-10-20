@@ -1,0 +1,87 @@
+---
+title: "課堂練習模版"
+author: "Hsu"
+date: "2020-10-20"
+output: output_format
+params:
+  id: "410683018"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Your code
+```{r}
+library(lubridate)
+```
+
+```{r}
+tpeTime <- ymd_hms("2020-03-18 13:52:40",
+        tz="Asia/Taipei")
+```
+```{r}
+pgTime <- mdy_hms("Mar.18, 2020, 05:52:40", tz="Europe/Lisbon")
+```
+
+```{r}
+ymd_hms(
+c("2020-03-18 13:52:40","2020-03-11 03:12:40")
+)
+```
+```{r}
+ymd_hms("2020-03-11T06:56:17Z")
+```
+#type/class
+```{r}
+typeof(tpeTime)
+class(tpeTime)
+```
+```{r}
+tpeTime
+print(tpeTime) #會出現時區的標記
+cat(tpeTime)
+```
+```{r}
+as.numeric(tpeTime)
+```
+
+```{r}
+print(as.character(tpeTime))
+cat(as.character(tpeTime))
+```
+#human tells computer
+```{r}
+tpeTime2 <- ymd_hms("2010-03-18 16:52:40",
+        tz="Asia/Taipei")
+pgTime2 <- mdy_hms("Mar.01, 2020, 03:52:40",
+                  tz="Europe/Lisbon")
+```
+#computer tells human
+```{r}
+with_tz(tpeTime2,tzone="America/New_York")
+```
+```{r}
+tpeTime3 <- with_tz(tpeTime2, tzone="America/New_York") #時區改變後文字描述的變化，不會改變電腦的時間記憶，也就是tpeYime2跟3在cat時秒數差距是一樣的
+tpeTime2
+tpeTime3
+print(tpeTime2)
+print(tpeTime3)
+```
+```{r}
+pgTime3 <- 
+  with_tz(pgTime2, tzone="America/New_York")
+
+print(pgTime2)
+print(pgTime3)
+```
+```{r}
+tpeTime3
+pgTime3
+```
+```{r}
+# Method 2: pass as a character that fits ISO8601 date time description standard with tz onset specified
+tpeTime_iso8601 <- format_ISO8601(tpeTime, usetz=T)
+tpeTime_iso8601
+```
+
