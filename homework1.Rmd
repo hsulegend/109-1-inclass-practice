@@ -2,8 +2,8 @@
 title: "homework 1"
 output: html_document
 params:
-  studentName: "你的名字"
-  studentID: "你的學號"
+  studentName: "許傳毅"
+  studentID: "410683018"
 ---
 
 # 注意事項
@@ -150,7 +150,9 @@ b[[1]]
 
 ```{r ans13}
 # G5TimeParsed
-G5TimeParsed <- paste0(NBA1920Final567$Game5$Date5,NBA1920Final567$Game5$StartTime5,NBA1920Final567$Game5$TimeZone5)
+G5TimeParsed <- paste0(Game5Time)
+
+print(G5TimeParsed)
 ```
 
 ### 1.4 Time Stamp
@@ -161,6 +163,11 @@ G5TimeParsed <- paste0(NBA1920Final567$Game5$Date5,NBA1920Final567$Game5$StartTi
 
 ```{r ans14}
 # TpeJason
+library(lubridate)
+NKAllen <- ymd_hm("2020-10-09 21:00",tz="America/New_York")
+TpeJason <-  with_tz(NKAllen,tzone = "Asia/Taipei")
+
+print(TpeJason)
 ```
 
 ### 1.5 Later Time
@@ -169,10 +176,13 @@ Louis臨時被要求整理財報資料，而在比賽開始後的15分鐘出現�
 
 ```{r ans15}
 # ParisLouis
+ParisLouis <- with_tz(NKAllen+minutes(15),tzone = "Europe/Paris")
+
+print(ParisLouis)
 ```
 
 ## 2. Factor
-
+ 
 執行以下程式產生會隨機產生500個中文正楷數字1-9存在chNubmers, 及隨機個數的中文0-9存在chNumbersWith0。
 
 ```{r data2}
@@ -188,6 +198,9 @@ chNumbersWith0 <- sample(ch0to9, randomLength, replace=T)
 
 ```{r ans21}
 # sumChNumbers
+chNumbersfactor <- factor(chNumbers)
+as.integer(chNumbersfactor) 
+sumChNumbers <- sum(as.integer(chNumbersfactor) )
 ```
 
 ### 2.2 
@@ -195,6 +208,10 @@ chNumbersWith0 <- sample(ch0to9, randomLength, replace=T)
 
 ```{r ans22}
 # sumChNumbersWith0
+chNumbersWith0500 <- sample(chNumbersWith0,500,replace =  T)
+chNumbersWith0500factor <- factor(chNumbersWith0500)
+as.integer(chNumbersWith0500factor)
+sumChNumbersWith0 <- sum(as.integer(chNumbersWith0500factor))
 ```
 
 
@@ -211,6 +228,9 @@ chNumbersWith0 <- sample(ch0to9, randomLength, replace=T)
 
 ```{r ans31}
 # escapeText
+aboutEscape <- c("在字串輸入時我們要用成對的\"或\'將文字包起來,R才會知道它是字串。\n字串在輸入時，若要cat時在螢幕看起來有換行則必需輸入\\n，其中\\稱為Escape\nkey，它讓後面字元跳脫了它在電腦的原始含意。")
+
+cat(aboutEscape)
 ```
 
 ### 3.2 Dear Mary
@@ -242,7 +262,13 @@ Dear Mary:
 
 
 ```{r ans32}
-# dearStudent
+# dearStuden
+a <- student$name
+b <- student$deadline
+c <- paste0(b)
+dearStudent <- c("Dear",a,":\n","\n","  貼心提醒您，作業上傳截止時間是",c,"。\n","\n","敬祝學安\n","\n","你的貼心學伴巴西利bot silly")
+
+cat(dearStudent)
 ```
 
 
@@ -252,6 +278,15 @@ Dear Mary:
 執行以下程式讓global environment出現location1, meta兩個物件。然而這程式對一台剛裝好基礎R的機器會有錯誤訊息，請修正它（最後一行comment line請勿更動）： 
 
 ```{r ans4}
+download.file(url="https://www.dropbox.com/s/rykdkmz27o1t4dh/IMG_2027.JPG?dl=1",
+destfile="hw1.jpg")
+library(magick) # 處理圖片的套件
+location1 <- image_read("hw1.jpg")
+location1
+library(exiftoolr) # 讀取圖片詳細資訊的套件
+meta <- exif_read("hw1.jpg")
+
 # list(location1, meta)
+location1
 ```
 
