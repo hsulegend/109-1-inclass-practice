@@ -1,0 +1,41 @@
+---
+title: "課堂練習模版"
+author: "Hsu"
+date: "2020-10-27"
+output: output_format
+params:
+  id: "410683018"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Your code
+
+```{r}
+#charactor 與factor
+#charactor轉factor:在factor函數中加入字串，接著以level給出此字串會出現的範圍
+
+ch1to9 <- c("壹","貳","參","肆","伍","陸","柒","捌","玖")
+ch0to9 <- c("零", ch1to9)
+chNumbers <- sample(ch1to9, 500, replace = T)
+randomLength <- sample(300:1000,1)
+chNumbersWith0 <- sample(ch0to9, randomLength, replace=T)
+
+#比較
+fct_chNumbers <- factor(chNumbers,levels = ch1to9)
+chNumbersfactor2 <- factor(chNumbers)
+#二者差在電腦看待文字的方式，在人看的介面下，兩者排列相同但是電腦看待的不同(電腦存儲時轉換的數字)，以head函數為例
+head(fct_chNumbers)
+head(chNumbersfactor2)#電腦認定的最小並非由1,2...
+as.integer(chNumbersfactor2)#因此這邊1不一定代表壹...
+```
+
+```{r}
+fct_chNumberswith0 <- factor(chNumbersWith0,levels = ch0to9)
+head(fct_chNumberswith0)#可以見到電腦將零存為數字1，壹存為電腦數字2...
+#因此在計算加總時，要在後面減掉所有字串所增加的1單位，也就是減掉lengh(chNumberswith0)這個函數
+#chNumberswith0的長度被減掉，就是所有產生的字串減一的概念。
+```
+
