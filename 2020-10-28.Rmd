@@ -1,0 +1,170 @@
+---
+title: "課堂練習模版"
+author: "Hsu"
+date: "2020-10-28"
+output: output_format
+params:
+  id: "410683018"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Your code
+
+```{r}
+vectorExample <- c("小明", "小英", "大雄")
+
+# 有多少位置可選：
+length(vectorExample)
+vectorExample[[1]]
+vectorExample[[3]]
+```
+```{r}
+listExample <- list(student = "小明", 學期 = list(`108-1` = list(list(name = "個體經濟學", 
+    teacher = "Alice", grade = 85)), `108-2` = list(list(name = "總體經濟學", 
+    teacher = "Mark", grade = 78))))
+# 有多少位置可選：
+length(listExample)
+```
+
+
+```{r}
+listExample[[1]]
+listExample[[2]]
+listExample[["student"]]
+listExample[["學期"]]
+listExample$student
+listExample$學期  # 特殊命名依然要用反頓點呼叫
+```
+```{r}
+  `.台北市預報元素值` <- 
+  list(
+    city="台北市",
+    high=25,
+    low=18
+  )
+`.新北市預報元素值` <- 
+  list(
+    city="新北市",
+    high=24,
+    low=15
+  )
+
+library(lubridate)
+`今明天氣` <-
+  list(
+    `今天日期`=ymd("2020-03-31"),
+    `明天天氣`=ymd("2020-04-01"),
+    `各地預報`=list(
+      `.台北市預報元素值`,
+      `.新北市預報元素值`
+      )
+
+  )
+```
+```{r}
+
+```
+```{r}
+vectorExample
+vectorExample[c(1, 3)]
+```
+#兩者在atomic vector相同但是在list不同
+#actomic vector,list都適用於取一個用雙中括號，多個時用一個中括號中間包c()
+```{r}
+vectorExample[c(1)]
+vectorExample[[1]]
+# 顯示到第一層
+str(listExample, max.level = 1)
+listExample[c("student")]#此法會有$student
+listExample[c("學期")]
+listExample[c("student", "學期")]
+```
+```{r}
+vectorExample
+vectorExample[c(T, T, F)]  # 要，要，不要
+pickbyNumber <- c(1,3)
+
+```
+#連鎖選取
+```{r}
+numVector <- c(2, 3, 6, -1, 4, 2, 6)
+select1 <- numVector[c(1, 4)]
+select1
+select2 <- select1[[1]]
+select2
+
+# 相當於
+numVector[c(1, 4)][[1]]#先取了c(1,4)再取其中的[[1]]出來
+```
+```{r}
+select1 <- numVector[c(T, T, F, T, F, F, T)]
+select1
+select2 <- select1[c(1, 4)]
+select2
+
+# 相當於
+numVector[c(T, T, F, T, F, F, T)][c(1, 4)]
+```
+#邏輯例題
+```{r}
+studenmajors <- c("經濟學系", "經濟學系", "社會學系", "社工系", "經濟學系")
+studentnames <- c("小英", "小美", "大雄", "阿華", "阿尼")
+studengender <- c("F", "F", "M", "F", "M")
+```
+```{r}
+studenmajors
+pickEcon <- c(T,T,F,F,T)#經濟系留下的狀況
+studentnames[pickEcon]
+studengender[pickEcon]
+```
+```{r}
+pickEcon <- studenmajors=="經濟學系"#未來會這樣操作，如同第一航的概念?
+studentnames[pickEcon]
+studengender[pickEcon]
+```
+
+```{r}
+pickEconNum <- c(1,2,5)
+which(pickEcon)#which函數顯現出邏輯中T的位置，以數字呈現
+```
+```{r}
+#找男性
+studentnames[pickEconNum][[3]]
+```
+#list應用
+```{r}
+today <- list(list("台北市", c(highest_temp = 25), c(lowest_temp = 18)), list("新北市", 
+    c(highest_temp = 24), c(lowest_temp = 15)))
+tomorrow <- list(list("台北市", c(highest_temp = 25), c(lowest_temp = 18)), list("新北市", 
+    c(highest_temp = 24), c(lowest_temp = 15)))
+
+weather <- list(today, tomorrow)
+
+print(weather)
+
+str(weather,1)
+str(weather,2)
+str(weather,3)
+```
+```{r}
+weather[[1]]
+str(weather[[1]],1)
+```
+```{r}
+weather[[2]][[1]][[2]]
+weather[[2]][[1]][[2]][["highest_temp"]]#可以自environment點開放大鏡後，左上角的視窗可以找到正確的程式名
+
+#最快的方法在list中依舊是$
+
+```
+#取代
+```{r}
+listExample$學期[["108-2"]][[1]][c("name","grade")] <- list(
+  name="Pat",grade="80"
+)
+```
+
+
