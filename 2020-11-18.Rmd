@@ -1,0 +1,77 @@
+---
+title: "課堂練習模版"
+author: "Hsu"
+date: "2020-11-18"
+output: output_format
+params:
+  id: "410683018"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Your code
+
+```{r}
+example <- list(
+  name=c("小明","小花","小新","美美"),
+  height=c(175,166,170,160),
+  weight=c(77,NA,60,43),
+  birthday=lubridate::ymd(c("1998-03-11","1999-12-22","1995-08-22","2001-10-10")),
+  hobby=c("美食 旅遊","旅遊 時尚","3C 美食","音樂 旅遊"),
+  residence=c("Taipei","New Taipei","Taichung","Kaohsiung"),
+  allowance=factor(c("0-1000","1001-2000","2000+","1001-2000")),
+  bloodType=c("A","B","B","O")
+)
+```
+#example的資料結構在R常常賦予它新的class，data frame，以延伸比list更多的運算工具。賦予data frame class可透過as.data.frame()來達成
+```{r}
+df_example <- as.data.frame(example)    #只有list裡每個元素值都是等長度atomic vector才能正確轉成合理的data frame表示形式
+df_example
+```
+```{r}
+tr_example <- purrr::transpose(example)
+str(tr_example)
+
+```
+```{r}
+#或是
+library(purrr)
+tr_example <- transpose(example)
+str(tr_example)
+```
+```{r}
+example2 <- 
+  list(
+    name=c("John", "Mary"),
+    height=list(178, 168), # not atomic vector
+    weight=c(88, 56, 70) # not the same length as other elements
+  )
+#as.data.frame(example2)#error
+```
+
+```{r}
+# 使用list的工具
+df_example$name[c(1,4)]
+
+# 使用data frame的延伸工具`[.row, .column]`
+df_example[c(1,4), "name"]
+```
+```{r}
+df_example[c(1,4), c("name","residence")]
+df_example[1]
+df_example[c(1),1:8]#1:8 一到八
+df_example[1,]$hobby
+df_example[1,][[5]]
+View(df_example[1])#如同點擊右邊環境的效果
+# 只使用list工具
+list(
+  name=df_example$name[c(1,4)],
+  residence=df_example$residence[c(1,4)]
+)
+# 要小心以下用法是error
+df_example[c("name","residence")][c(1,4)]
+```
+
+
