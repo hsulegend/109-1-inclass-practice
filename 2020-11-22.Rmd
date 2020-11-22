@@ -1,0 +1,158 @@
+---
+title: "課堂練習模版"
+author: "Hsu"
+date: "2020-11-22"
+output: output_format
+params:
+  id: "410683018"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Your code
+
+```{r}
+AA = c(Mary=176, John=188, Jenny= 165, Kate=170)
+LL = list(
+  Mary=list(176,"Taipei"),
+  John=list(188,"New Taipei"),
+  Jenny=list(165,"Taichung"),
+  Kate=list(170,"Hualien")
+)
+```
+```{r}
+AA[[1]]
+AA[1] #以aa來看刪掉非第一個的物件
+```
+```{r}
+str(LL)
+```
+```{r}
+str(LL[[1]])
+str(LL[1])
+```
+
+```{r}
+LL[[1]]
+LL[1]
+```
+```{r}
+LL$Mary
+```
+#取多個
+```{r}
+AA[c(1,4)]
+LL[c(1,4)]
+AA[c("Mary","Kate")]
+LL[c("Mary","Kate")]
+```
+```{r}
+AA[c(T, F, F, T)]#要不要向量的長最多度跟原本所擁有的元素要一樣長
+LL[c(T, F, F, T)]
+```
+#步驟一:取出不存在
+```{r}
+a <- c(2, 5, 7)#只有三個
+a[[4]]
+```
+#賦予不存在存在值
+```{r}
+a[[4]] <- 8
+print(a)
+```
+#foodpanda範例
+```{r}
+restaurant = "すき家 Sukiya (新北三峽店)" #restaurant_value
+date = lubridate::mdy("Nov 10, 2020") #date_value #等同於先library(lubridate)後，程式碼直接打mdy("Nov 10, 2020")
+order = list(
+  list(
+    item="蕃茄牛丼",
+    quantity=1
+  ) # 這裡少了一筆 "起司蕃茄牛丼"  #order_value
+)
+total = 328 #total_value
+```
+#包成一筆資料，因為內容非atomic type，只能用list
+```{r}
+oneOrder <- list(
+  "restaurant"=restaurant,
+  "date"=date,
+  "order"=order,
+  "total"=total
+)
+```
+#在oneOrder加入“起司蕃茄牛丼”
+```{r}
+oneOrder$order[[2]] 
+```
+```{r}
+oneOrder$order[[2]] <- list(
+    item="起司蕃茄牛丼",
+    quantity=1
+  )
+```
+```{r}
+str(oneOrder)
+print(oneOrder)
+View(oneOrder)#會跳出視窗
+```
+#有時要記住order底下元素架構不容易，可以先以已存在元素值當模版去修改
+```{r}
+template <- oneOrder$order[[1]] #方便觀察要更改的項目
+template
+template$item <- "起司蕃茄牛丼"
+template$quantity <- 1
+
+oneOrder$order[[2]] <- template
+
+str(oneOrder)
+```
+#多筆新增
+```{r}
+a <- c(2, 5, 7)
+a[c(4,5)]
+```
+```{r}
+a[c(4,5)] <- c(8,12)
+print(a)
+```
+#在order裡增加1份’牛丼飯’，1份’豬排飯’
+```{r}
+length(oneOrder$order) #直接知道order裡面有幾個值
+oneOrder$order #母層，記得注意母層是list還是atomic
+```
+```{r}
+oneOrder$order[c(3,4)] <- 
+  list(
+    list(
+      item="牛丼飯",
+      quantity=1
+    ),                #item3
+    list(
+      item="豬排飯",
+      quantity=1
+    )                 #item4
+  )
+print(oneOrder)
+```
+#模板式
+```{r}
+# 取出目前已有的子元素一個當模版
+secondItem <- oneItem <- oneOrder$order  #一次創造多個相同值可用<-不斷串連
+
+oneItem$item <- "牛丼飯"
+oneItem$quantity <- 1
+secondItem$item <- "豬排飯"
+secondItem$quantity <- 1
+
+oneOrder$order[c(3,4)] <- list(
+  oneItem, secondItem
+)
+```
+
+
+
+
+
