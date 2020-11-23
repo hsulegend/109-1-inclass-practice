@@ -151,6 +151,71 @@ oneOrder$order[c(3,4)] <- list(
   oneItem, secondItem
 )
 ```
+#替換
+```{r}
+LL0 <- LL <- list(
+  "Mary was born on", 
+  ymd("1995-7-1"),
+  "John was born on",
+  ymd("1997-10-27")
+  )
+LL[[2]]
+
+LL[[2]] <- ymd("1995-7-8")
+print(LL)
+```
+#番茄牛丼改成2份
+```{r}
+View(oneOrder) #進去看番茄牛丼在第幾個位置
+oneOrder$order[[1]]$quantity
+oneOrder$order[[1]]$quantity <- 2
+
+#或是
+oneOrder[["order"]][[1]][["qauntity"]] <- 2
+```
+#多筆替換修改
+```{r}
+LL <- LL0 #改回錯誤的mary生日
+LL[c(2,4)]#一次改兩個錯誤的值
+LL[c(2,4)] <- 
+  list(
+    ymd("1995-7-8"),
+    ymd("1997-10-17")
+  )                   #記得跟著母體的形式，所以用list
+print(LL[c(2,4)])
+```
+#記錄多筆資料：第二,三筆資料
+```{r}
+anotherOrder <- 
+  list(
+    restaurant="古橋飲食店",
+    date=lubridate::mdy("Nov 9, 2020"),
+    order=list(
+      list(
+        item="古早味排骨飯",
+        quantity=1)),
+    total=89)
+thirdOrder <-
+  list(
+    restaurant="Tijo Kitchen",
+    date=lubridate::mdy("Nov 8, 2020"),
+    order=list(
+      list(
+        item="韓式泡菜黑咖哩飯",
+        quantity=1))
+  )
+```
+
+```{r}
+allMyOrders <- list(oneOrder,anotherOrder,thirdOrder) 
+#或是
+allMyOrders <- list(oneOrder)
+allMyOrders[[2]] <- anotherOrder
+allMyOrders[[3]] <- thirdOrder
+#或是
+allMyOrders <- list(oneOrder)
+allMyOrders[c(2,3)] <- list(anotherOrder,thirdOrder)
+```
 
 
 
