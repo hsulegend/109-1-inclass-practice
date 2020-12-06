@@ -1,0 +1,125 @@
+---
+title: "課堂練習模版"
+author: "Hsu"
+date: "2020-12-06(2)"
+output: output_format
+params:
+  id: "410683018"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Your code
+
+```{r}
+library(stringr)
+library(glue)
+```
+#On character class
+```{r}
+thatsAlright <- 
+  jsonlite::fromJSON(
+    "https://www.dropbox.com/s/f3ox7rd5favr0o0/thatsAlright.json?dl=1"
+  )
+
+View(thatsAlright)
+class(thatsAlright)
+length(thatsAlright)
+```
+#字元數與字串向量長度
+```{r}
+# 字串向量長度
+length(c("I will"))
+# 每個元素值有幾個字元(包含符號與空格)
+str_length(c("I will"))
+```
+```{r}
+# 字串向量長度，因為r最小單位是向量
+length(thatsAlright)
+# 每個元素值有幾個字元
+str_length(thatsAlright)
+```
+#切割split
+```{r}
+line67 <- thatsAlright[c(6,7)]
+line67
+```
+```{r}
+#[1] “I play my own damn tune, I shine like the moon” [2] “And very soon, I’ll soon fly over you”
+str_split(line67, ",")
+str_split(line67,", ")
+```
+```{r}
+line67 <- c(line67,"And very soon,I'll")
+line67
+
+str_split(line67,",")
+
+str_split(line67,", ")
+```
+#規律探測
+```{r}
+pattern="you" 
+```
+#用來選出thatsAlright中符合規律的元素值，也就是可以放到[.]中來進行thatsAlright[.]元素選取
+```{r}
+#str_detect
+#get c(T,F, F, T,...) logical returned value. 一一回報每個元素值是否符合規律。（產生要不要向量）
+# 'you'是否出現在第1,2,3,...最後一句
+pick_you <- str_detect(thatsAlright, pattern="you")
+str_view_all(thatsAlright[pick_you],"you")
+pick_you
+```
+#str_which
+get c(1,15, 17, 18,...) integer returned value. 回報所有符合規律的元素位置
+
+```{r}
+# 哪幾句有'you'出現
+whichHas_you <- str_which(thatsAlright, pattern="you")
+whichHas_you
+str_view_all(thatsAlright[whichHas_you],"you")
+```
+```{r}
+whichHas_you_fromPick <- which(pick_you) #pick_you裡面true的位置
+whichHas_you_fromPick
+```
+#留下thatsAlright符合規律條件的句子（subset概念）
+```{r}
+# 只留下有出現'you'字眼的句子
+onlyYou <- str_subset(thatsAlright, pattern="you")
+
+length(thatsAlright)
+length(onlyYou)
+```
+```{r}
+thatsAlright[pick_you]
+thatsAlright[whichHas_you]
+```
+#str_count
+回報每個元素規律出現次數
+```{r}
+# 每一句有幾個"you"
+countEach_you <- str_count(thatsAlright,
+                           pattern="you")
+countEach_you
+str_view_all(
+  thatsAlright[1:10], pattern="you")
+```
+#滿足“you”規律的有以下數個：
+you
+your
+young
+若只要you這個字可前後加\\b定義字的boundary
+```{r}
+patternWithBoundary="\\byou\\b"
+str_view_all(
+  c("I am yours",
+    "And you?",
+    "Young and smart", 
+    "It means that you and I are lucky"),
+  pattern=patternWithBoundary
+)
+```
+
