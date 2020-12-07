@@ -1,0 +1,124 @@
+---
+title: "課堂練習模版"
+author: "Hsu"
+date: "2020-12-07"
+output: output_format
+params:
+  id: "410683018"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Your code
+
+#正規表示式：目標規律描述
+Regular expression(regex)一種廣義描述所要字串規律及在字句位置的表示法
+```{r}
+Rmdfiles <- c("file1.Rmd", "file2.R", "file3.rmd", "file4.RMD", "myRmd.R")
+SchoolIds <- c("410973029", "410988011", "410974023","410783025","710773022","410788021","410673124","410873051","49988001")
+```
+#task1: 找出Rmdfiles中副檔名為Rmd(不分大小寫)的檔案。
+task2: 找出學號中4開頭，108或109學年入學且系號為73或88的學號
+
+#Regex寫法分成兩部份：
+目標規律性描述（target pattern, 一定要有）
+task1目標是不分大小寫的Rmd
+task2目標是9位數字，第一位是4，接著是108或109，再來只能是73或88
+目標位置註解（target position annotation，不一定需要）
+task1目標在完整檔案名稱的結尾，且前面跟著
+
+#target pattern
+目標一 不分大小寫的rmd(找到規律性)
+```{r}
+library(stringr)
+```
+
+```{r}
+Rmdfiles
+regexPattern="[Rr][Mm][Dd]"   #使用[]來定義捲帶中可以出現的字元(如同餃子老虎機)
+str_subset(
+  Rmdfiles, pattern=regexPattern)
+```
+#目標二 第一位是4，接著是108或109，再來只能是73或88
+```{r}
+SchoolIds
+regexPattern="[4](108|109)(73|88)"    #[]:字元 ():字組
+str_subset(
+  SchoolIds, pattern=regexPattern)
+```
+#補充
+#ignore_case:不分大小寫
+```{r}
+#task1
+str_subset(Rmdfiles,pattern = regex("rmd",ignore_case = T))  #regex函數的運用，在cheet sheet裡面
+```
+
+#4.8.5 規律粹取/取代
+```{r}
+#str_extract(萃取出來)
+sameIdentities <- c("臺北市", "台北市", "台北大學", "臺北大學", "基隆市")
+
+str_detect(
+  sameIdentities, pattern="[台臺]")
+str_view_all(
+  sameIdentities, pattern="[台臺]")
+
+str_extract(
+  sameIdentities, pattern="[台臺]北市")
+
+dragonPeople <-
+  c(
+    "住在台北市的臺北人也常被稱為天龍人")
+str_extract(
+  dragonPeople,
+  pattern="[台臺]北[市人]"
+)
+# 當一個元素值內的文字規律可多次出現時用_all來一網打盡，否則只處理第一個出現的規律
+str_extract_all(
+  dragonPeople,
+  pattern="[台臺]北[市人]"
+)
+```
+#str_replace(被取代文本，pattern，取代文本)
+```{r}
+Rmdfiles # length=5
+str_replace(
+  Rmdfiles,
+  pattern = rep("[Rr][Mm][Dd]",5), #repeat五次
+  replacement = rep("Rmd",5)
+)
+#pattern與replacement長度與string不同時會進行recycle
+Rmdfiles # length=5
+str_replace(
+  Rmdfiles,
+  pattern = "[Rr][Mm][Dd]",
+  replacement = "Rmd"
+)
+```
+#str_replace_all
+不同規律要做不同替換時使用
+```{r}
+#str_replace_all:很多pattern且各自要去替代
+```
+
+```{r}
+emailContent <- '親愛的_name_朋友好，
+
+  恭喜你，你的電子發票號碼_invoiceNumber_ 差點中獎。'
+cat(emailContent)
+```
+```{r}
+replacementNamedVector <- c(
+  "_name_" = "小新",
+  "_invoiceNumber_" = "EF-89400133"
+)
+
+synthesizedContent <- str_replace_all(     #先寫出replacement
+  emailContent,
+  replacementNamedVector
+)
+cat(synthesizedContent)
+```
+
