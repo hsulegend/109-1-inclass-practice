@@ -1,0 +1,136 @@
+---
+title: "課堂練習模版"
+author: "Hsu"
+date: "2020-12-09"
+output: output_format
+params:
+  id: "410683018"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+```{r}
+library(stringr)
+```
+
+## Your code
+
+```{r}
+set.seed(2020)
+d1 <- sample(c(rep("4",10),rep("3",3),rep("7",3)), 25, replace=T)
+d2 <- sample(98:109, 25, replace=T)
+d3 <- sample(c("73", "74", "78", "83", "72"))
+d4 <- sample(1:120, 25, replace=T)
+d4 <- str_pad(d4, 3, side = "left", pad="0")
+schoolIds <- paste0(d1,d2,d3,d4)
+schoolIds
+```
+```{r}
+# {x} 前方卷帶連裝x條，三種都一樣
+str_subset(schoolIds,
+           pattern='[0123456789]{9}') #{}裝幾條帶子[]
+str_subset(schoolIds,
+           pattern='[0-9]{9}')
+str_subset(schoolIds,
+           pattern='[:digit:]{9}')
+```
+#找出所有對R的愛，愛的形式是以「太…愛」存在：
+```{r}
+myLove2R <- c("我實在是太愛太愛太愛愛R課程了",
+  "我才是太愛太愛太太愛太太太愛R了",
+  "我則是太愛愛太愛太愛愛愛R了",
+  "找我太太聊天，我太太愛理不理的，我只好回去練我最愛的R。")
+```
+#{m}
+目標1：找出連寫兩次的「太愛」
+```{r}
+str_view_all(myLove2R, "(太愛){2}") #()字組
+```
+
+#{m,n} 及?
+目標2: 找出「太愛」及「太愛愛」
+```{r}
+# {1,2} 前面卷帶裝1～2條 
+str_view_all(myLove2R, "太[愛]{1,2}")
+str_view_all(myLove2R, "太愛{1,2}") # 卷帶只有一個字，可不寫[]
+
+# ? 前面卷帶不確定要不要裝（要裝也只會裝1條）
+str_view_all(myLove2R, "太愛[愛]?")
+
+#{m,n}是指裝m到n條：{2,5}指裝2到5條，不是2條或5條
+```
+#+ -> 目標3：找出太後面有愛，但幾個愛不限
+```{r}
+str_view_all(myLove2R, "太[愛]{1,}")
+```
+#? 不確定愛不愛
++ 沒有限制的愛(指1條或以上，也可寫{1,})
+* 不管愛不愛，不管愛多深
+
+```{r}
+str_view_all(myLove2R, "太[愛]*")
+```
+#正規表示式：目標位置註解
+1.前後鄰居描述
+```{r}
+str_view_all(myLove2R, "太愛[愛]?")
+str_view_all(myLove2R, "太+愛+(?!理不理)") #後面布街理不理
+```
+#找出縣市後的下一級行政區（即xxx區，xxx鎮）
+```{r}
+addresses <- c(
+  '臺中市后里區公館里尾社路385號',
+  '新竹市東區科學園路125號1樓',
+  '新竹市北區竹光路99號',
+  '金門縣金城鎮賢庵里山前33號',
+  '臺中市南屯區工業區二十四路23號1樓')
+```
+```{r}
+str_extract(
+  addresses,
+  "(?<=[縣市])[\u4E00-\u9FFF]+[區鎮]"
+)
+```
+#字元排除卷帶[^XYZ]：要排除的字元XYZ
+```{r}
+str_extract(
+  addresses,
+  "(?<=[縣市])[^區]+[區鎮]"
+)
+```
+#2.頭尾定位
+```{r}
+#針對目標在開頭或結尾  在開頭：^目標 （不要和字元排除卷帶[^XYZ]搞混） 在結尾：目標$
+Rmdfiles <- c("file1.Rmd", "file2.R", "file3.rmd", "file4.RMD", "myRmd.R")
+str_subset(
+  Rmdfiles, "[Rr][Mm][Dd]"
+)
+
+# 要求在句尾
+str_subset(
+  Rmdfiles, "[Rr][Mm][Dd]$"
+)
+```
+#Homework2 總共有幾小題？(找出#再開頭的)
+```{r}
+download.file("https://www.dropbox.com/s/o9kt3lxtx9pmjqj/homework2.Rmd?dl=1", destfile = "./hw2.Rmd", mode="wb")
+xfun::read_utf8("./hw2.Rmd") -> hw2lines
+View(hw2lines)
+```
+```{r}
+pick_starting3Hash <- str_detect(
+  hw2lines,
+  "^###"
+)
+sum(pick_starting3Hash)
+```
+```{r}
+pick_starting3Hash <- str_detect(
+  hw2lines,
+  "^### (?=[0-9])"
+)
+sum(pick_starting3Hash)
+```
+
+
