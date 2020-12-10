@@ -1,0 +1,213 @@
+ ---
+title: "課堂練習模版"
+author: "Hsu"
+date: "2020-12-10"
+output: output_format
+params:
+  id: "410683018"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Your code
+
+```{r}
+library(purrr)
+```
+# {…}的使用
+```{r}
+sukiyaMenu <- jsonlite::fromJSON("https://www.dropbox.com/s/iu9b1hnvbtss83q/sukiyaMenu.json?dl=1")
+
+nonsetMenu3 <- sukiyaMenu[c("豪華雙饗丼", "牛丼類", "咖哩類" )]
+```
+```{r}
+items <- list()
+#創造一個list of 3
+items$dish_name = vector("list", length=3)   #vector(mode, length) 可以產生一個mode（可以想成class）且長度為length的向量（廣義定義，包含list）
+```
+
+```{r}
+# 餐點名稱
+dish_name = nonsetMenu3[[1]]$name
+items$dish_name[[1]] <- unlist(dish_name)
+
+dish_name = nonsetMenu3[[2]]$name
+items$dish_name[[2]] <- unlist(dish_name)
+
+dish_name = nonsetMenu3[[3]]$name
+items$dish_name[[3]] <- unlist(dish_name)
+```
+```{r}
+# 餐點名稱
+{
+  dish_name <- nonsetMenu3[[1]]$name
+  items$dish_name[[1]] <- unlist(dish_name)
+}
+{
+  dish_name <- nonsetMenu3[[2]]$name
+  items$dish_name[[2]] <- unlist(dish_name)
+}
+{
+  dish_name <- nonsetMenu3[[3]]$name
+  items$dish_name[[3]] <- unlist(dish_name)
+}
+```
+#{...} 裡面「最後一個expression」的「可視(visible)值」可以當做值用來賦予一個物件元素值。也就是說
+```{r}
+result <- {...} # 或
+{...} -> result          #result的值會是{...}裡最後一個expression的可視結果
+```
+```{r}
+{
+  dish_name <- nonsetMenu3[[1]]$name # 1st expression
+  items$dish_name[[1]] <- unlist(dish_name)  # 2nd expression
+}
+```
+#<-{…}與{…}->
+```{r}
+result1 <- {
+  dish_name <- nonsetMenu3[[1]]$name # 1st expression
+  items$dish_name[[1]] <- unlist(dish_name)  # 2nd expression
+}
+{
+  dish_name <- nonsetMenu3[[1]]$name # 1st expression
+  items$dish_name[[1]] <- unlist(dish_name)  # 2nd expression
+} -> result2
+#result1, result2的值都是unlist(dish_name)的可視值
+```
+#{...}有助於拆解問題解決步驟
+```{r}
+#小明點了“牛肉燒烤雞肉雙饗丼”飯大碗，小英點了“秋葵牛丼”迷你碗, 兩人總共花了多少錢
+mingsPrice <- # 找出小明價格
+{
+  
+}
+
+yingsPrice <- # 找出小英價格
+{
+  
+}
+
+total= mingsPrice + yingsPrice
+```
+```{r}
+mingsPrice <- # 找出小明價格
+{
+  sizeChoice <- nonsetMenu3[["豪華雙饗丼"]][["product_variations"]][[2]]
+  pick_size <- sizeChoice$name == '飯大碗'
+  sizeChoice$price[pick_size]
+}
+
+yingsPrice <- # 找出小英價格
+{
+  sizeChoice <- nonsetMenu3[["牛丼類"]][["product_variations"]][[4]]
+  pick_size <- sizeChoice$name == '迷你碗'
+  sizeChoice$price[pick_size]
+}
+
+total= mingsPrice + yingsPrice
+```
+
+#formula and purrr::map
+```{r}
+library(purrr)
+map(
+  list(2,5,3,7),
+  ~{
+    3^.x
+  }
+)
+map(
+  c(2,5,3,7),
+  ~{
+    3^.x
+  }
+)
+```
+```{r}
+map(
+  list(
+    list("Mary", 5),
+    list("John", 10)
+  ),
+  ~{
+    paste0(.x[[1]], " is ",.x[[2]], " years old")
+  }
+)
+```
+#兩種.x的使用
+```{r}
+myData <- 
+  list(
+    list("Mary", 5),
+    list("John", 10)
+  )
+
+# .x 代表myData的元素
+map(
+  myData,
+  ~{
+    paste0(.x[[1]], " is ",.x[[2]], " years old")
+  }
+)
+
+# .x 代表myData元素值的位置
+map(
+  1:2,
+  ~{
+    paste0(myData[[.x]][[1]], " is ", myData[[.x]][[2]], " years old")
+  }
+)
+```
+```{r}
+#使用元素值位置時，position sequence可以透過：
+#seq_along(object) 去產生object底下所需對應元素值位置的position sequence。
+#通常用
+#1:length(object)找位置長度，不過seq_along為直接使用
+map(
+  seq_along(myData),
+  ~{
+    paste0(myData[[.x]][[1]], " is ", myData[[.x]][[2]], " years old")
+  }  
+)
+```
+#之前我們針對每一個，以第1個為例，進行如下的運算
+```{r}
+{
+  dish_name <- nonsetMenu3[[1]]$name # 1st expression
+  unlist(dish_name)  # 2nd expression
+}
+```
+```{r}
+{
+  dish_name <- sukiyaMenu[[.x]]$name # 1st expression
+  unlist(dish_name)  # 2nd expression
+}
+```
+
+
+```{r}
+map(
+  seq_along(sukiyaMenu),
+  ~ {
+    dish_name <- sukiyaMenu[[.x]]$name # 1st expression
+    unlist(dish_name) # 2nd expression
+  }
+) -> result
+result <- unlist(result[-1])
+result
+```
+```{r}
+map(
+  sukiyaMenu,
+  ~ {
+    dish_name <- .x$name # 1st expression
+    unlist(dish_name) # 2nd expression
+  }
+) -> result
+result <- unlist(result[-1])
+result
+```
+
