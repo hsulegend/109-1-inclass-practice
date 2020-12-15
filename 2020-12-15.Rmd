@@ -1,0 +1,118 @@
+---
+title: "課堂練習模版"
+author: "Hsu"
+date: "2020-12-15"
+output: output_format
+params:
+  id: "410683018"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Your code
+
+```{r}
+clipr::read_clip() #從網路上複製訊息到r上(網路上複製後來R打這串函數然後案執行)
+clipr::write_clip() #從r複製到外面
+#舉例
+"hi everyone" -> myText
+clipr::write_clip(myText)
+```
+
+#cut
+```{r}
+#在數值資料及時間資料，cut(numeric_vector, breaks) 可將numeric vector裡每個元素以它落在哪個切割區間（由break點定義）形成「類別」表示
+originX <- 0:10
+originX
+
+# 將0-10切兩份
+cutX_evenly <- cut(originX, breaks=2)
+cutX_evenly
+```
+```{r}
+#指定切點要將資料在3, 7點各劃一刀分成3份
+# 由breaks將0（含）到10間（含）分成3份
+cutX_error <- cut(originX, breaks=c(0,3,7,10))
+cutX_error
+
+#numeric class內訂區間為( ]型態:(為不包含；]為包含 e.g.(0,3] = 0<x<=3
+#由於( ]型態, 所以只有(break_min, break_max]內的資料才不會形成NA. break_min 要比資料最小值小一些, break_max可以是max(originX)
+# 由breaks將-1（不含）到10間（含）分成3份
+cutX_correct <- cut(originX, breaks=c(-1,3,7,10)) 
+cutX_correct
+
+# 另一種用法(numeric)
+cutX_infinity <- cut(originX, breaks=c(-Inf,3,7,Inf))
+cutX_infinity
+```
+#用在時間資料時，每個break point想成是新事件開始的日期，所以它的區間類型內訂[ ) (即right (close)= F)
+#由於[ ), 所以只有[break_min, break_max)內的資料才不會形成NA. break_max 要比資料最大值大一些, break_min可以是min(originD)。
+```{r}
+library(lubridate)
+originD <- ymd(c(
+  "2020-01-03", 
+  "2020-02-11",
+  "2020-03-08", 
+  "2020-05-07",
+  "2020-09-20",
+  "2020-10-10",
+  "2020-11-07",
+  "2020-12-05"))
+originD
+```
+#事件發生區間：
+
+事件一：“2020-03-08”-“2020-05-21”
+事件二：“2020-07-20”-“2020-10-11”
+資料開始-“2020-03-07”,
+“2020-03-08”-“2020-05-21”, (事件一)
+“2020-05-22”-“2020-07-19”,
+“2020-07-20”-“2020-10-11”, (事件二)
+“2020-10-11”-資料結束
+#[ )找下刀的時點。 資料開始, “2020-03-08”, “2020-05-22”, “2020-07-20”, “2020-10-11”, 資料結束再多一天
+```{r}
+# 由breaks將2020-01-03（含）至2020-12-06（不含）分成三份
+cutD <- cut(originD,
+            breaks = 
+              c(
+                min(originD),
+                ymd(c(
+                "2020-03-08",
+                "2020-05-22",
+                "2020-07-20",
+                "2020-10-11")),
+                max(originD)+days(1)
+              ))
+              
+cutD
+levels(cutD)
+```
+```{r}
+levels(cutD) <- c("沒事","事件一","沒事","事件二","沒事")
+
+df <- data.frame(
+  origin=originD,
+  cut=cutD
+)
+View(df)
+```
+```{r}
+# 也可以使用Inf
+cutD <- cut(originD,
+            breaks = 
+              c(
+                min(originD),
+                ymd(c(
+                "2020-03-08",
+                "2020-05-22",
+                "2020-07-20",
+                "2020-10-11")),
+                Inf # 小心不要 ymd(Inf)
+              ))
+              
+cutD
+# 時間沒有負無窮。（正負無窮是在有一個絕對原點0的情況下才有的數學概念）
+```
+
