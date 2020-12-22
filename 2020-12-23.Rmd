@@ -1,0 +1,138 @@
+---
+title: "課堂練習模版"
+author: "Hsu"
+date: "2020-12-23"
+output: output_format
+params:
+  id: "410683018"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Your code
+#例題星座查詢
+```{r}
+library(lubridate); library(dplyr); library(stringr); library(purrr)
+jsonlite::fromJSON(
+"https://www.dropbox.com/s/8sftw4bbjumeqph/signMapping.json?dl=1") -> horoscopes
+```
+
+```{r}
+userBirthday <- ymd("1998-10-30") #這邊隨意設定(未來例如自題目獲取
+
+userHoroscopes <- 
+  {
+    # 取得生日年份
+    birthYear <- {
+      
+    }
+    
+    # 取得生日年份的12星座起始日期
+    horoscopeStartingDateInBirthYear <- {
+      
+    }
+    
+    # 切割生日成為12星座區間
+    cutBirthdayByStartingDate <- {
+      
+    }
+    
+    # 改變星座區間類別名稱
+    birthdayCutRenameLevels <- {
+      
+    }
+    levels(cutBirthdayByStartingDate) <- birthdayCutRenameLevels
+    
+    as.character(cutBirthYearByStartingDate)
+  }
+```
+
+```{r}
+userBirthday <- ymd("1998-10-30")
+
+get_userHoroscopes <- function(userBirthday) 
+  {
+    # 取得生日年份
+    birthYear <- {
+      year(userBirthday)
+    }
+    
+    # 取得生日年份的12星座起始日期
+    horoscopeStartingDateInBirthYear <- {
+      str_startingDate <- 
+        paste0(birthYear,"-",horoscopes$sdate)
+      ymd(str_startingDate)
+    }
+    
+    # 切割生日成為12星座區間
+    cutBirthdayByStartingDate <- {
+      cut(userBirthday,
+          breaks =
+            c(
+              ymd(
+                paste0(birthYear, "-01-01")
+              ),
+              horoscopeStartingDateInBirthYear,
+              Inf
+            )
+          )
+    }
+    
+    # 改變星座區間類別名稱
+    birthdayCutRenameLevels <- {
+      c("摩羯座", horoscopes$sign)
+    }
+    levels(cutBirthdayByStartingDate) <- birthdayCutRenameLevels
+    
+    as.character(cutBirthdayByStartingDate)
+  }
+```
+```{r}
+get_userHoroscopes(ymd("1995-08-27"))
+get_userHoroscopes(ymd("1970-05-18"))
+get_userHoroscopes(ymd("2001-4-1"))
+```
+```{r}
+#測試是否是date
+get_userHoroscopes2 <- function(userBirthday){
+  assertthat::assert_that(is.Date(userBirthday),
+                          msg="userBirthday should be a Date class object.")    #assert_that確保is.Date(userBirthday，若不正確會秀出userBirthday should be a Date class object.並跳出執行
+  get_userHoroscopes(userBirthday)
+}
+```
+```{r}
+get_userHoroscopes2("2010-01-22")
+```
+#Input Argument default
+```{r}
+#0.000001在這微預設值，本體就不用再打了
+df0 <- function(f, epsilon=0.00001){
+  (f(epsilon)-f(0))/epsilon
+}
+```
+```{r}
+myFun <- function(x){
+  5*x^2-2*x+7
+}
+```
+```{r}
+df0(myFun) #使用epsilon=0.00001
+```
+```{r}
+#變動epsilon
+df0(myFun, epsilon = 1e-08)
+df0(myFun, epsilon = 1e-10)
+```
+# R script
+```{r}
+download.file(
+  "https://www.dropbox.com/s/zim84gg2g23g0pc/horoscopes.R?dl=1", 
+  destfile="./horoscopes.R", mode="w"
+)
+```
+```{r}
+source("./horoscopes.R") #拉Rscript 近來
+```
+

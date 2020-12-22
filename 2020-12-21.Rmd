@@ -1,0 +1,145 @@
+---
+title: "課堂練習模版"
+author: "Hsu"
+date: "2020-12-21"
+output: output_format
+params:
+  id: "410683018"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Your code
+
+#function
+Given nominal interest rate 9% per year, what is $10,000 worth three year from now in terms of today’s money (i.e. present discounted value of $10,000)?
+10000/(1+0.09)^3
+```{r}
+#Block programming
+# Given some information
+R <- 0.09
+M <- 10000
+T <- 3
+# What I need to do
+PDV <- 
+{
+  M/(1+R)**T
+}
+```
+
+```{r}
+#Function
+getPDV <- function(R,M,T) 
+{
+  M/(1+R)**T
+}
+```
+```{r}
+#例題
+getPDV(R=0.09, T=3, M=10000) #getPDV(0.09,10000 , 3)也可以
+```
+#Execution Environment
+```{r}
+#執行getPDV(R=0.09, T=3, M=10000)時，Global Environment並不需要有R, T, M，執行完函數呼叫後也不會在Global environment產生R, T, #M物件，那是因為它會有另外的執行環境（executive environment）在記錄這些物件及{…}計算過程中的任何新生物件。
+debug(getPDV) #除錯
+getPDV(R=0.09, T=3, M=10000)  #不是在global environment 中執行，有自己的空間
+
+undebug(getPDV)
+#程式執行的環境是短暫存在(Execution Environment)
+```
+
+# 查詢函數formals arguments要求
+```{r}
+formals(getPDV)
+```
+```{r}
+# 查詢函數主體
+body(getPDV)
+```
+```{r}
+# body執行時若有物件不存在execution environment時要去找尋的environment
+environment(getPDV)
+#在哪個環境被創造就是他的環境環境
+```
+#Function Environment
+#當函數在執行裡面的body時，若在當時環境找不到，會去母體的Function Environment中找
+```{r}
+# What I need to do(先淨空環境去學習)
+getPDV2 <- function(R,M){
+  M/(1+R)**TT
+}
+```
+```{r}
+getPDV2(R=0.12, M=50000)
+debug(getPDV2)
+getPDV2(R=0.12, M=50000)
+undebug(getPDV2)
+TT <- 3
+```
+```{r}
+TT <- 1
+getPDV2(R=0.12, M=50000)
+```
+#Return
+```{r}
+#函數由execution environment輸出的值, 可以是：最後一個執行列的運算值（值不能儲存在任何物件）：
+testFun <- function(){
+  a <-2
+  b <- 5
+  a+b
+}
+testFun()
+```
+```{r}
+testErrorFun <- function(){
+  a <-2
+  b <- 5
+  output <- a+b #存起來的意思
+}
+testErrorFun() #不會顯示出來因為被存起來
+```
+
+```{r}
+#行列出現return()時，()內的值會回傳(而且會在執行return下一行的程式)：
+testFun <- function(){
+  a <-2
+  b <- 5
+  return(a+b)
+}
+testFun()
+```
+```{r}
+#執行列出現invisible()時，()內的值只在函數呼叫同時有指定物件儲存時才會回傳：  ◆所以用return比較多
+testFun <- function(){
+  a <-2
+  b <- 5
+  invisible(a+b)
+}
+testFun() #呈現不回傳
+output <- testFun()
+output
+```
+# Function as value
+```{r}
+#Function can be saved in a list
+demandFun <- function(P) 5-3*P #(沒下{}是因為只有一行，可以不用使用)
+supplyFun <- function(P) 1+0.5*P
+market <- list(
+  demand=demandFun,
+  supply=supplyFun
+)
+```
+
+```{r}
+#Function can be used as an function argument
+df0 <- function(f){
+  epsilon <- 0.00001
+  (f(epsilon)-f(0))/epsilon
+}
+
+df0(market$demand)
+df0(market$supply)
+```
+
