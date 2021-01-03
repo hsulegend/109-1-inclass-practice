@@ -1,0 +1,347 @@
+---
+title: "課堂練習模版"
+author: "Hsu"
+date: "2021-01-03"
+output: output_format
+params:
+  id: "410683018"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Your code
+
+```{r}
+#if(){}
+#if+conditional expression+programming blog
+
+set.seed(10739)
+customers <- data.frame(
+  bills = sample(200:500, 10),
+  vouchers = sample(c(T,F), size=10, replace=T,#replace使T F抽出後可放回
+                     prob=c(0.4,0.6)
+                     )
+)
+head(customers)
+```
+```{r}
+bill <- customers$bills[[3]]
+hasVoucher <- customers$vouchers[[3]]
+totalBill <- 
+{
+  startingBill <- bill
+  if(hasVoucher)
+  {
+    bill <- bill - 20
+  }
+  message("You initial bill is ", startingBill,".\n",
+          "You final bill is ", bill)
+  bill
+}
+print(totalBill)
+```
+```{r}
+get_totalBill <- function(bill, hasVoucher)
+{
+  startingBill <- bill
+  if(hasVoucher)
+  {
+    bill <- bill - 20
+  }
+  message("You initial bill is ", startingBill,".\n",
+          "You final bill is ", bill, "\n")
+  bill
+}
+```
+```{r}
+get_totalBill(customers$bills[[6]],customers$vouchers[[6]])
+```
+```{r}
+library(purrr)
+map(
+  1:10,
+  ~{get_totalBill(customers$bills[[.x]],customers$vouchers[[.x]])})
+```
+
+
+```{r}
+#新東西
+purrr::map2(
+  customers$bills, customers$vouchers,
+  ~{get_totalBill(.x, .y)}
+)
+```
+```{r}
+f <- function(x){
+  if(x<0)
+  {
+    stop("x has to be non-negative.")#終止城市繼續執行，但無法被回存
+  }
+  sqrt(x)#開根號
+}
+```
+```{r}
+f(-2)
+f(2)
+```
+```{r}
+comment_grade <- function(grade){
+  if(grade < 60) {return("Don't give up. There is still hope.")}
+  return("Good job. Keep going")#回存且又可達到stop想要的效果
+}
+```
+```{r}
+df_grades <- data.frame(
+  grade=sample(50:95, 20, replace = T)
+)
+purrr::map_chr(    #如同unlist(map())，不過需要字串長度一樣
+  df_grades$grade,
+  comment_grade
+) -> df_grades$comment
+```
+#5.2.2遇到多個旗標
+```{r}
+grades <- c(55, 72, 40) # fail in first
+# any one failed? 
+if(grades < 60) {message("\nYes, someone failed")}
+#只看了第一個數字
+```
+```{r}
+grades <- c(72, 55, 40) # fail in second
+# any one failed? 
+if(grades < 60) message("\nYes, someone failed")
+```
+#Use
+
+all() to flag if all failed. #everyopne failed
+
+any() to flag if any failed. #someone failed
+
+```{r}
+grades <- c(72, 55, 82)
+# any one failed? 
+if(any(grades < 60)) message("\nYes, someone failed")
+```
+```{r}
+#環境設定長度為1
+Sys.setenv("_R_CHECK_LENGTH_1_CONDITION_" = "true")
+```
+```{r}
+#因為上面的設定而出現error
+grades <- c(55, 72, 82)
+# any one failed? 
+if(grades < 60) message("\nYes, someone failed") # error now
+```
+#&& ||
+When using logical operations on logical values:
+
+To judge if all conditions hold, a proper flag should be from && than &. #&&會依序檢查只要遇到一格F就會停
+
+```{r}
+grades >= 60
+gender == "female"
+(grades >= 60) & (gender == "female") #and
+```
+
+
+To judge if any condition hold, a proper flag should be from || than |. # ||在condition更有效率
+```{r}
+(grades >= 60) | (gender == "female") #or
+```
+
+```{r}
+grade1 <- list(
+  economics=55,
+  calculus=77
+)
+grade2 <- c(
+  economics=55,
+  calculus=77
+)
+```
+
+```{r}
+(is.list(grade1) &  grade1$economics > 60)
+(is.list(grade2) &  grade2$economics > 60)
+```
+
+```{r}
+(is.list(grade1) && grade1$economics > 60)
+(is.list(grade2) && grade2$economics > 60)
+```
+```{r}
+myAge <- 75
+
+if(myAge >=65 | stop("Error")){
+  "Qualified"
+} else {
+  warning("Not qualified")
+}
+```
+```{r}
+if(myAge >=65 ||  stop("Error")){
+  "Qualified"
+} else {
+  warning("Not qualified")
+}
+```
+#When designing a control flow, the outcome from conditions should:
+
+Always generate ONE flag signal.
+
+Its AND/OR operators should be sequential (ie. using &&/||) to avoid unnecessary errors and boost computation efficiency
+
+#5.2.4if else
+```{r}
+# 前提條件
+x <- 4L
+# 任務
+fx <- {
+  
+  # ending scenario 1:
+  {
+    x/2
+  }
+  # ending scenario 2:
+  {
+    -(x+1)/2
+  }
+}
+```
+
+```{r}
+# 前提條件
+x <- 4L #整數
+# 任務
+fx <- {
+  
+  # ending scenario 1:
+  if(x %% 2 ==0)
+  {
+    x/2
+  } else
+  # ending scenario 2:
+  {
+    -(x+1)/2
+  }
+}
+
+fx
+```
+#else must follow } immediately in the same line as
+
+} else
+Otherwise, the preceeding if(...){...} will be considered a complete if-control flow.
+
+```{r}
+fx <- function(x)
+{
+  # ending scenario 1:
+  if(x %% 2 ==0)
+  {
+    return(x/2)
+  } else
+  # ending scenario 2:
+  {
+    return(-(x+1)/2)
+  }
+}
+```
+```{r}
+fx(4L)
+fx(7L)
+```
+#5.2.5 if-else if-else if-else
+```{r}
+# 前提
+grade <- 88
+# 任務
+comment <- 
+{
+  {
+    "優"
+  }
+  {
+    "良"
+  }
+  {
+    "尚可"
+  }
+  {
+    "待加強"
+  }
+}
+```
+
+```{r}
+# 前提
+grade <- 88
+# 任務
+comment <- 
+{
+  if(grade>=90)
+  {
+    "優"
+  } else
+  if(grade >=80 && grade <=89)
+  {
+    "良"
+  } else
+  if(grade>=70 && grade <=79)
+  {
+    "尚可"
+  } else
+  {
+    "待加強"
+  }
+}
+
+comment
+```
+
+```{r}
+comment_grade <- function(grade){
+  if(grade>=90)
+  {
+    "優"
+  } else
+  if(grade >=80 && grade <=89)
+  {
+    "良"
+  } else
+  if(grade>=70 && grade <=79)
+  {
+    "尚可"
+  } else
+  {
+    "待加強"
+  }
+}
+
+comment_grade(65)
+```
+#If there are multiple TRUE flags (所有條件沒有互相互斥)from different if-condition expressions, ONLY the programming block follows the FIRST TRUE flag will be executed
+```{r}
+comment_grade <- function(grade){
+  if(grade>=85)
+  {
+    "優"
+  } else
+  if(grade >=80 && grade <=89)
+  {
+    "良"
+  } else
+  if(grade>=70 && grade <=79)
+  {
+    "尚可"
+  } else
+  {
+    "待加強"
+  }
+}
+
+comment_grade(86)
+```
+
