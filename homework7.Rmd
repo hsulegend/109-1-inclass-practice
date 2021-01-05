@@ -1,0 +1,183 @@
+ ---
+title: "homework 7"
+output: html_document
+params:
+  studentName: "你的名字"
+  studentID: "你的學號"
+---
+
+# 注意事項
+
+存檔與填寫注意事項：
+
+假設你叫王小明，學號41078392。
+
+  1. 有些同學可能家裡電腦不是utf-8設定，為防萬一，請於存檔時使用：File > save with enconding, 然後選utf-8
+
+  2. 本文檔開始的Frontmatter中，studentID（即key）其value目前為"你的學號"，以上面學號為例則必需改成"41078392"；而studentName（key）其value目前為"你的名字"，以上面名字為例則必需改成"王小明"
+  
+> 每次作業滿分10分：有寫作業於期限內上傳得3分，剩餘7分依作業準確率決定最後得分多寡，除非該題另有規定。
+
+> 前述存檔與frontmatter要求缺任何一個則扣1分。
+
+請先執以下code chunk, 引入所需packages，答案禁止引用其他套件（Package）。
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = F, eval=F)
+library(jsonlite); library(lubridate); library(readr); library(stringr); library(purrr)
+```
+
+# 題目
+
+完成第5章綜合練習以下幾題：
+
+### 4. 故宮畫藏查詢App{-}
+
+執行以下程式下載200幅故宮中國畫作資訊(**painting**):
+```{r data4, echo=T}
+jsonlite::fromJSON("https://www.dropbox.com/s/ttw2j7nitc35vfx/palaceMuseumPainting.json?dl=1", simplifyDataFrame = F) -> painting
+```
+
+#### 4.5 Dynasties Identification{-}
+
+```{r}
+PaintingName = "主要題名：五代後蜀滕昌祐蝶戲長春圖　卷"
+get_painting_dynasty <- function(PaintingName){
+  #找出一樣的title
+  pick_PaintingName <- str_which(map(1:200,~{painting[[.x]][[1]][[2]]$Title}),pattern = PaintingName)
+  
+  #找出朝代
+  get_paintingdynasty <- str_extract(painting[[pick_PaintingName]][[1]][[2]]$Title, pattern = "([唐宋元明清]|五代後蜀|五代南唐)")
+  return(get_paintingdynasty)
+}
+
+```
+
+#### 4.6 Subjects Identification{-}
+
+```{r}
+get_painting_subjects <- function(PaintingName){
+  #目標位置
+  pick_PaintingName <- str_which(map(1:200,~{painting[[.x]][[1]][[2]]$Title}),pattern = PaintingName)
+  #Subject找尋
+  pick_subject <- str_which(names(painting[[pick_PaintingName]]$DACatalog$MetaDesc), "Subject")
+  subjects <- unlist(painting[[pick_PaintingName]]$DACatalog$MetaDesc[pick_subject])
+  painting_subjects <- str_replace(subjects,"作品內容：","")
+  return(painting_subjects)
+}
+
+```
+
+
+#### 4.7 Special Exhibition Preparation{-}
+
+```{r}
+get_painting_withDS <- function(PaintingName){
+  painting_withDS <- list(
+    "Dynasty" = get_painting_dynasty(PaintingName),
+    "Title" = str_replace(PaintingName,"主要題名：",""),
+    "Id" = str_replace(painting[[pick_PaintingName]]$DACatalog$MetaDesc$Identifier,"作品號：",""),
+    "Subjects" = get_painting_subjects(PaintingName),
+    "Icon" = painting[[pick_PaintingName]]$DACatalog$AdminDesc$ICON
+  )
+  return(painting_withDS)
+}
+```
+
+#### 4.8 Guide to Dynasty-based Exhibition{-}
+
+```{r}
+get_instruction <- function(PaintingName){
+  instruction <- if(get_painting_dynasty(PaintingName) == "清")
+  {
+    print("Please go to 4F")
+    }else
+      if(get_painting_dynasty(PaintingName) == "明")
+    {
+      print("Please go to 3F")
+    }else
+      if(get_painting_dynasty(PaintingName) == "宋")
+      {
+        print("Please go to 2F")
+      }else
+      {
+        print("Please ask our reception")
+      }
+  get_painting_withDS(PaintingName)
+}
+```
+
+### 5. 交友軟體改良{-}
+
+This exercise is to help you understand function environment. First, run the following code to clean your Global environment
+
+```{r, echo=TRUE}
+rm(list=ls())
+```
+
+Second, execute the following chunk to obtain R script file "NTPUmeetCore.R"
+```{r, echo=TRUE}
+# download NTPUmeetCore.R script file
+xfun::download_file("https://www.dropbox.com/s/54khnc8k607amw1/NTPUmeetCore.R?dl=1")
+# open the file to take a look
+file.edit("./NTPUmeetCore.R")
+```
+
+When NTPUmeet is launched, "NTPUmeetCore.R" is sourced into user's cellphone global environment. Populate it with various objects including data and functions.
+
+```{r, echo=TRUE}
+# source the script to you global environment
+source("./NTPUmeetCore.R")
+```
+
+#### 5.3 like
+
+```{r ans53, echo=T}
+library(purrr)
+library(stringr)
+currentUser <- appLogin(members[[35]]$memberID, c(24.945, 121.367))
+member2like <- members[[sample(1:1000,1)]]
+member2like
+member2like$preference
+ like <- function(currentUser, member2like){
+   #是否為TRUE以及兩者學號學系碼相同
+    if(member2like$preference$wantSameMajor == TRUE && as.integer(str_sub(currentUser$schoolID,5,6)) == as.integer(str_sub(member2like$schoolID,5,6)))
+    {#$wantSenior＝T（只要三，四年級）, 則入學年必需是107或之前； F 則沒限制
+     if(member2like$preference$wantSenior == TRUE && as.integer(str_sub(currentUser$schoolID,2,3)) <= 7)
+     {#$alreadyGraduatedAllowed＝F（不允許已畢業的）, 則入學年不可以是106之前（不含106, 106可以）； T 則沒限制。
+       if(member2like$preference$alreadyGraduatedAllowed == FALSE && as.integer(str_sub(currentUser$schoolID,2,3)) >= 6)
+       {#$genderPreference（性別偏好）= “男”，“女”或"均可
+         if(member2like$preference$genderPreference == "男" || member2like$preference$genderPreference == "女" || member2like$preference$genderPreference == "均可")
+         {
+           currentUser$likes[[length(currentUser$likes)+1]] <- member2like$schoolID
+         }else
+         {return("Sorry the member will not like you.")}
+       }else
+       {return("Sorry the member will not like you.")}
+     }else
+     {return("Sorry the member will not like you.")}
+    } else
+    {return("Sorry the member will not like you.")}
+
+  return(currentUser)
+ }
+```
+
+### 加分題
+
+只有當非加分題的finalGrade > 6時，加分題才會加分。每小題「完全答對」加finalGrade一分，finalGrade達10分即不再加。
+
+#### 4.9 User interaction
+
+```{r ans44, echo=F}
+get_special_instruction <- function(PaintingName){
+  
+}
+```
+
+### 6. Rock-Paper-Scissor{-}
+
+```{r}
+gameStart <- function(){
+  
+}
+```
