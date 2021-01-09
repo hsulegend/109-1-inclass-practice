@@ -1,0 +1,171 @@
+---
+title: "課堂練習模版"
+author: "Hsu"
+date: "2021-01-09(2)"
+output: output_format
+params:
+  id: "410683018"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Your code
+#while loop
+```{r}
+# iterates: 1,2,3,4,5
+# iteration block
+{
+  sampleData[[.x]]
+}
+```
+
+```{r}
+.x <- .x + 1 # if .x exists in your environment
+#(count <- count +1) count是計算之意
+
+```
+
+```{r}
+flag <- (.x < 5) # continuation flag condition with definite iterates
+```
+```{r}
+while(flag)#while flag is true then keep continue
+{
+  .x <- .x+1 # Iterate generation
+  sampleData[[.x]][[1]]
+  flag <- (.x < 5) # Continuation flag
+}
+```
+#真正流程
+```{r}
+rm(list=ls())
+sampleData <- list(
+  list("男", 45), list("女", 32), list("男",50), list("男",33), list("女", 21)
+)
+
+.x <- 0 # initial iterate
+flag <- TRUE # initial flag
+while(flag)
+{
+  .x <- .x+ 1 # Iterate generation
+  print(sampleData[[.x]][[1]])
+  flag <- (.x < 5) # continuation flag
+}
+```
+```{r}
+#比較
+for(.x in 1:5)
+{
+  print(sampleData[[.x]][[1]])
+}
+```
+#Safe guard while-loop(限制跑的數量)
+```{r}
+.x <- 0 # initial iterate
+flag <- TRUE # initial flag
+cat('Iterate .x starts at 0, and continue to\n')
+while(flag && .x <= 100) # throw in maximal iterate restriction
+{
+  .x <- .x+ 1 # Iterate generation
+  print(sampleData[[.x]][[1]])
+  flag <- (.x < 5) # continuation flag 
+  cat('.x = ', .x, ' complete\n')
+}
+```
+#Guess Number例題
+Computer randomly drawed a number from 10 to 50, denoted as x0. If user guesses a number less than x0, show “Higher” on the screen. If larger than x0, show “Lower” on the screen. When guess incorrectly, user can guess again until guessing correctly, then prompt “BINGO!!! You guess it right after XXX trials” on the screen where XXX is number of iterations have taken
+```{r}
+# computer pick a number
+.computerPick <- {
+  
+}
+
+# iteration time
+.x <- 1
+
+# user guess
+userGuess <- readline("What's your guess?")
+
+# conditional execution of 3 blocks
+{
+  "Higher"
+}
+{
+  "Lower"
+}
+{
+  glue::glue("BINGO!!! You guess it right after {.x} trials")
+}
+```
+
+```{r}
+# computer pick a number
+.computerPick <- {
+  sample(10:50, 1)
+}
+
+
+# iteration block
+{
+  # iteration generation
+  # # iteration time
+  # .x <- 1
+
+  # user guess
+  userGuess <- readline("What's your guess?")
+
+  # conditional execution of 3 blocks
+  result <-
+    if (as.integer(userGuess) < .computerPick) {
+      "Higher"
+    } else
+    if (as.integer(userGuess) > .computerPick) {
+      "Lower"
+    } else {
+      glue::glue("BINGO!!! You guess it right after {.x} trials")
+    }
+
+  message(result)
+  
+  # continuation flag
+  
+}
+```
+```{r}
+# computer pick a number
+.computerPick <- {
+  sample(10:50, 1)
+}
+
+# iteration time
+.x <- 0
+flag <- T
+while(flag)
+# iteration block
+{
+  # iteration generation
+  .x <- .x + 1
+  
+  # user guess
+  userGuess <- readline("What's your guess?")
+
+  # conditional execution of 3 blocks
+  result <-
+    if (as.integer(userGuess) < .computerPick) {
+      "Higher"
+    } else
+    if (as.integer(userGuess) > .computerPick) {
+      "Lower"
+    } else {
+      glue::glue("BINGO!!! You guess it right after {.x} trials")
+    }
+
+  message(result)
+  
+  # continuation flag
+  flag <- ! stringr::str_detect(result, "BINGO")
+}
+```
+
